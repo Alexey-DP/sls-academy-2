@@ -2,6 +2,10 @@
 
 Initiate clone project
 
+Init dependencies:
+
+`npm i`
+
 Start app with:
 
 `npm start`
