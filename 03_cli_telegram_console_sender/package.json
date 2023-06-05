@@ -1,0 +1,16 @@
+{
+  "name": "03_cli_telegram_console_sender",
+  "version": "1.0.0",
+  "description": "cli app for sending messages and photos to telegram",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "env $(cat .env | xargs) node ./src/app.js"
+  },
+  "author": "Alexey Pochtovik",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^10.0.1",
+    "node-telegram-bot-api": "^0.61.0"
+  }
+}
