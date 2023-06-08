@@ -28,24 +28,4 @@ export default {
       ],
     },
   },
-  bank: {
-    reply_markup: {
-      resize_keyboard: true,
-      keyboard: [
-        [
-          {
-            text: TgTxts.pb,
-          },
-          {
-            text: TgTxts.mb,
-          },
-        ],
-        [
-          {
-            text: TgTxts.back,
-          },
-        ],
-      ],
-    },
-  },
 };

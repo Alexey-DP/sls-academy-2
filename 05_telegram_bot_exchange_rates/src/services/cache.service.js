@@ -2,7 +2,8 @@ import NodeCache from "node-cache";
 import BankService from "./bank.service.js";
 
 export default class CacheService {
-  nodeCache = new NodeCache();
+  timeToCache = 3 * 60;
+  nodeCache = new NodeCache({ stdTTL: this.timeToCache });
   bankService = new BankService();
 
   async setMbExchangeRatesToCache() {
@@ -28,10 +29,16 @@ export default class CacheService {
   }
 
   setToCache(key, value) {
-    this.nodeCache.set(key, value);
+    if (value) {
+      this.nodeCache.set(key, value);
+    }
   }
 
-  getFromCache(key) {
-    return this.nodeCache.get(key);
+  isCacheHas(key) {
+    return this.nodeCache.has(key);
+  }
+
+  getManyFromCache(arrKeys) {
+    return this.nodeCache.mget(arrKeys);
   }
 }

@@ -6,7 +6,6 @@ import TgTxts from "../telegram/tgTxts.js";
 
 export default class TelegramService {
   telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-  timeToUpdateExchangeRates = 5 * 60 * 1000;
   bot = new TelegramBot(this.telegramBotToken, { polling: true });
   cacheService = new CacheService();
 
@@ -33,7 +32,7 @@ export default class TelegramService {
   onMessageTgBot() {
     this.bot.on("message", async (msg) => {
       const {
-        chat: { id: chatId },
+        chat: { id: chatId, first_name },
         text,
       } = msg;
 
@@ -50,63 +49,49 @@ export default class TelegramService {
       }
 
       if (text === TgTxts.EUR || text === TgTxts.USD) {
-        const preferCurrency = text === TgTxts.EUR ? "EUR" : "USD";
-        this.cacheService.setToCache(chatId, preferCurrency);
-        return await this.bot.sendMessage(
-          chatId,
-          TgMsgs.preferBank,
-          TgBtns.bank
-        );
-      }
-
-      if (text === TgTxts.pb || text === TgTxts.mb) {
-        const preferBank = text === TgTxts.pb ? "pb" : "mb";
-        const currency = this.cacheService.getFromCache(chatId);
-        const exchangeRates = this.cacheService.getFromCache(preferBank);
-        if (!exchangeRates || !currency) {
-          return await this.bot.sendMessage(
-            chatId,
-            TgMsgs.sorry,
-            TgBtns.startButton
-          );
+        if (
+          !this.cacheService.isCacheHas("mb") ||
+          !this.cacheService.isCacheHas("pb")
+        ) {
+          try {
+            await this.cacheService.setMbExchangeRatesToCache();
+            await this.cacheService.setPbExchangeRatesToCache();
+          } catch (error) {
+            return await this.sendErrorMessage(error.message, chatId);
+          }
         }
-        return await this.bot.sendMessage(
-          chatId,
-          TgMsgs.result(currency, exchangeRates)
-        );
-      }
 
-      if (text === TgTxts.back) {
-        return await this.bot.sendMessage(
-          chatId,
-          TgMsgs.preferCurrency,
-          TgBtns.currency
-        );
+        const currency = text === TgTxts.EUR ? "EUR" : "USD";
+        const { mb: mbExchangeRates, pb: pbExchangeRates } =
+          this.cacheService.getManyFromCache(["mb", "pb"]);
+
+        const resultMessage =
+          "💱EXCHANGE RATES:\n\n" +
+          "Privatbank🏛️\n" +
+          TgMsgs.result(currency, pbExchangeRates) +
+          "Monobank📱\n" +
+          TgMsgs.result(currency, mbExchangeRates) +
+          "Was delighted to assist😊";
+
+        return await this.bot.sendMessage(chatId, resultMessage);
       }
 
       return await this.bot.sendMessage(
         chatId,
-        TgMsgs.startMessage("Friend"),
+        TgMsgs.startMessage(first_name),
         TgBtns.startButton
       );
     });
   }
 
+  async sendErrorMessage(errorMessage, chatId) {
+    console.log(errorMessage);
+    return await this.bot.sendMessage(chatId, TgMsgs.sorry, TgBtns.startButton);
+  }
+
   async initTgBot() {
-    try {
-      await this.cacheService.setPbExchangeRatesToCache();
-      await this.cacheService.setMbExchangeRatesToCache();
-      this.setTgCommands();
-      this.onCommandsTgBot();
-      this.onMessageTgBot();
-      const updatePbExchangeRates = setInterval(async () => {
-        await this.cacheService.setPbExchangeRatesToCache();
-      }, this.timeToUpdateExchangeRates);
-      const updateMbExchangeRates = setInterval(async () => {
-        await this.cacheService.setMbExchangeRatesToCache();
-      }, this.timeToUpdateExchangeRates);
-    } catch (error) {
-      console.log(error.message);
-    }
+    this.setTgCommands();
+    this.onCommandsTgBot();
+    this.onMessageTgBot();
   }
 }
