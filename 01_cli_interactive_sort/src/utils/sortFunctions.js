@@ -13,10 +13,6 @@ export default class SortFunctions {
     return list.filter((item) => !isNaN(item)).sort((a, b) => b - a);
   }
 
-  static sortNumbersDescending(list) {
-    return list.filter((item) => !isNaN(item)).sort((a, b) => b - a);
-  }
-
   static sortByWordLength(list) {
     return list
       .filter((item) => isNaN(item))
