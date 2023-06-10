@@ -10,7 +10,7 @@ export default {
     return (
       `As of ${exchangeRates[currency].date.toLocaleString()}\n\n` +
       `For buy: 1 ${currency} = ${exchangeRates[currency].buy} UAH\n` +
-      `For sale 1 ${currency} = ${exchangeRates[currency].sale} UAH\n\n`
+      `For sale: 1 ${currency} = ${exchangeRates[currency].sale} UAH\n\n`
     );
   },
 };
