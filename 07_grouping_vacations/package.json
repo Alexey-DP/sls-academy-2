@@ -1,0 +1,12 @@
+{
+  "name": "07_grouping_vacations",
+  "version": "1.0.0",
+  "description": "format JSON data",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Alexey Pochtovik",
+  "license": "ISC"
+}
