@@ -1,0 +1,13 @@
+{
+  "name": "06_instagram_giveaway",
+  "version": "1.0.0",
+  "description": "app for sorting and selecting values",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "speed": "node speedRun.js"
+  },
+  "author": "Alexey Pochtovik",
+  "license": "ISC"
+}
