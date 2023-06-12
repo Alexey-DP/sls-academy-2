@@ -1,36 +1,34 @@
 const usersUrl = "https://jsonbase.com/sls-team/vacations";
 
-const response = await fetch(usersUrl);
-const originalData = await response.json();
-
 const formatJSONdata = (data) => {
-  const usersList = {};
-
-  for (let userData of data) {
+  const usersList = data.reduce((prev, curr) => {
     const {
       user: { name: userName, _id: userId },
       startDate,
       endDate,
-    } = userData;
+    } = curr;
 
-    if (!usersList[userId]) {
-      usersList[userId] = {
-        userId,
-        userName,
-        vacations: [
-          {
-            startDate,
-            endDate,
-          },
-        ],
-      };
-      continue;
-    }
-
-    usersList[userId].vacations.push({ startDate, endDate });
-  }
-
+    !prev[userId]
+      ? (prev[userId] = {
+          userId,
+          userName,
+          vacations: [
+            {
+              startDate,
+              endDate,
+            },
+          ],
+        })
+      : prev[userId].vacations.push({ startDate, endDate });
+    return prev;
+  }, {});
   return JSON.stringify(Object.values(usersList));
 };
 
-console.log(formatJSONdata(originalData));
+try {
+  const response = await fetch(usersUrl);
+  const originalData = await response.json();
+  console.log(formatJSONdata(originalData));
+} catch (error) {
+  console.log(error.message);
+}
