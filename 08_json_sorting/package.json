@@ -1,0 +1,12 @@
+{
+  "name": "08_json_sorting",
+  "version": "1.0.0",
+  "description": "search isDone in responses",
+  "main": "json-sorting.js",
+  "type": "module",
+  "scripts": {
+    "start": "node json-sorting.js"
+  },
+  "author": "Alexey Pochtovik",
+  "license": "ISC"
+}
